@@ -10,6 +10,7 @@ class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoice) {
     override val appIconLabel: String get() = "whatsapp"
     override val packageName: String get() = "com.whatsapp"
 
+
     private var openingChat = false
     private lateinit var chatName: String
     private val newChatId = "com.whatsapp:id/fab"
