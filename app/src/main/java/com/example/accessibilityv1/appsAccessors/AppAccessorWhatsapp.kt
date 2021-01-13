@@ -10,24 +10,35 @@ class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoice) {
     override val appIconLabel: String get() = "whatsapp"
     override val packageName: String get() = "com.whatsapp"
 
+    private var openingChat = false
     private lateinit var chatName: String
     private val newChatId = "com.whatsapp:id/fab"
     private val tabsId = "com.whatsapp:id/home_tab_layout"
     private val contactRowId = "com.whatsapp:id/contact_row_container"
     private val contactNameId = "com.whatsapp:id/conversations_row_contact_name"
-    private val classNameHomeActivity = "com.whatsapp.HomeActivity"
+    private val classNameConversation = "com.whatsapp.Conversation"
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         this.openChat(event)
+        this.onChatOpened(event)
         this.speakOnFocus(event)
         this.speakChatInfo(event)
     }
 
     private fun openChat(event: AccessibilityEvent) {
-        if (AccessibilityEvent.TYPE_VIEW_CLICKED == event.eventType && event.source != null) {
-            if (event.className.toString() == this.classNameRelativeLayout) {
+        if (AccessibilityEvent.TYPE_VIEW_CLICKED == event.eventType &&
+            event.className.toString() == this.classNameRelativeLayout &&
+            event.source != null &&
+            !this.openingChat) {
                 event.source.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            }
+                this.openingChat = true
+        }
+    }
+
+    private fun onChatOpened(event: AccessibilityEvent) {
+        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType &&
+            event.className.toString() == this.classNameConversation) {
+            this.openingChat = false
         }
     }
 
@@ -39,8 +50,8 @@ class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoice) {
             if (className == this.classNameImageView) {
                 this.chatName = contentDescription
             }
-            if (className == this.classNameTextView && contentDescription.contains("unread")) {
-                this.speak(this.chatName + " " + event.text.toString() + " mensajes sin leer")
+            if (className == this.classNameTextView && contentDescription.contains("no leídos")) {
+                this.speak(this.chatName + " " + event.contentDescription.toString())
             } else {
                 this.speak(this.chatName)
             }
