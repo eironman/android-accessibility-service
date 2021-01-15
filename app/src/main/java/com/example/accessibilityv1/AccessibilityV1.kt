@@ -10,9 +10,6 @@ import com.example.accessibilityv1.appsAccessors.AppAccessorFactory
 
 class AccessibilityV1: AccessibilityService() {
 
-    // diego.aaron.emulador@gmail.com
-    // juk47SD4tg
-
     private lateinit var userInput: UserInput
     private lateinit var appAccessor: AppAccessor
     private lateinit var textToVoice: TextToVoice
@@ -36,7 +33,6 @@ class AccessibilityV1: AccessibilityService() {
     private fun printNode(event: AccessibilityEvent) {
         if (event.source != null) {
             val source: AccessibilityNodeInfo = event.source
-//            source.performAction(AccessibilityNodeInfo.ACTION_CLICK)
             if (source.viewIdResourceName.isNullOrEmpty()) {
                 Log.i("AA Node", source.toString())
             } else {

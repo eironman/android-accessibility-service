@@ -10,11 +10,10 @@ class AppAccessorFactory(textToVoice: TextToVoice) {
     private var accessorWhatsapp: AppAccessorWhatsapp = AppAccessorWhatsapp(textToVoice)
 
     fun getAccessor(event: AccessibilityEvent): AppAccessor {
-        val packageName = event.packageName?.toString()
-        return when {
-            this.accessorOnce.packageName == packageName -> this.accessorOnce
-            this.accessorSettings.packageName == packageName -> this.accessorSettings
-            this.accessorWhatsapp.packageName == packageName -> this.accessorWhatsapp
+        return when (event.packageName?.toString()) {
+            this.accessorOnce.packageName -> this.accessorOnce
+            this.accessorSettings.packageName -> this.accessorSettings
+            this.accessorWhatsapp.packageName -> this.accessorWhatsapp
             else -> this.accessorHome
         }
     }
