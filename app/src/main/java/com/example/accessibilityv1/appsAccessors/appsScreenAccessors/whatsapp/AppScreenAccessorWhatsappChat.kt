@@ -4,13 +4,9 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice
-import com.example.accessibilityv1.appsAccessors.AppAccessorWhatsapp
 import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.AppScreenAccessor
 
 class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor(textToVoice) {
-    override val appIconLabel: String get() = "whatsapp"
-    override val packageName: String get() = "com.whatsapp"
-
     private var readMessagePointer = -1
     private lateinit var chatMessagesParentNode: AccessibilityNodeInfo
     private var chatMessagesNodes: MutableList<AccessibilityNodeInfo> = mutableListOf()
@@ -25,13 +21,6 @@ class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor
         if (node.className.toString() == this.classNameViewGroup) {
             this.chatMessagesNodes.add(node)
         }
-//        if (!node.viewIdResourceName.isNullOrEmpty()) {
-//            when(node.viewIdResourceName.toString()) {
-//                this.chatMessagesListId -> this.chatMessagesParentNode = node
-//                this.chatMessageTextId -> this.chatMessagesNodes.add(node)
-//                else -> {}
-//            }
-//        }
         for (i in node.childCount downTo 1) {
             if (node.getChild(i - 1) != null) {
                 Log.i("CHILDREN", node.getChild(i - 1).toString())
@@ -41,24 +30,31 @@ class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor
         }
     }
 
-    private fun readChatMessage() {
-        if (this.chatMessagesNodes.isNotEmpty()) {
-            Log.i("FOCUS ON", this.chatMessagesNodes[this.readMessagePointer].toString())
-            this.chatMessagesNodes[this.readMessagePointer].performAction(AccessibilityNodeInfo.ACTION_SELECT)
-//            this.speak(this.chatMessagesNodes[this.readMessagePointer].text.toString())
-        }
-    }
-
     override fun onButtonUpPressed(): Boolean {
         return this.keyEventStopPropagationResponse
     }
 
     override fun onButtonUpReleased(): Boolean {
-        if (this.readMessagePointer < this.chatMessagesNodes.size) {
+        if (this.readMessagePointer < this.chatMessagesNodes.size - 1) {
+            this.deselectChatMessage()
             this.readMessagePointer++
+            this.selectChatMessage()
         }
-        this.readChatMessage()
         return this.keyEventStopPropagationResponse
+    }
+
+    private fun selectChatMessage() {
+        if (this.chatMessagesNodes.isNotEmpty()) {
+            this.chatMessagesNodes[this.readMessagePointer]
+                .performAction(AccessibilityNodeInfo.ACTION_SELECT)
+        }
+    }
+
+    private fun deselectChatMessage() {
+        if (this.chatMessagesNodes.isNotEmpty() && this.readMessagePointer >= 0) {
+            this.chatMessagesNodes[this.readMessagePointer]
+                .performAction(AccessibilityNodeInfo.ACTION_CLEAR_SELECTION)
+        }
     }
 
     override fun onButtonDownPressed(): Boolean {
@@ -67,9 +63,10 @@ class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor
 
     override fun onButtonDownReleased(): Boolean {
         if (this.readMessagePointer > 0) {
+            this.deselectChatMessage()
             this.readMessagePointer--
+            this.selectChatMessage()
         }
-        this.readChatMessage()
         return this.keyEventStopPropagationResponse
     }
 }

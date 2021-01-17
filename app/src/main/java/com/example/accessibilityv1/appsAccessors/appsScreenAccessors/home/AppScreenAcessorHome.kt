@@ -5,9 +5,6 @@ import com.example.accessibilityv1.TextToVoice
 import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.AppScreenAccessor
 
 class AppScreenAcessorHome(textToVoice: TextToVoice): AppScreenAccessor(textToVoice) {
-    override val packageName: String get() = ""
-    override val appIconLabel: String get() = ""
-
     private var homeScreenEvents = 0
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {

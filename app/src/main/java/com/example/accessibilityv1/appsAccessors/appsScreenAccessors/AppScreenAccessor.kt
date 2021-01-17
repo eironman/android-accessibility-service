@@ -9,9 +9,6 @@ import com.example.accessibilityv1.KeyAction
 import com.example.accessibilityv1.UserInput
 
 abstract class AppScreenAccessor constructor(var textToVoice: TextToVoice) {
-    abstract val packageName: String
-    abstract val appIconLabel: String
-
     protected val classNameTextView = "android.widget.TextView"
     protected val classNameViewGroup = "android.view.ViewGroup"
     protected val classNameImageView = "android.widget.ImageView"

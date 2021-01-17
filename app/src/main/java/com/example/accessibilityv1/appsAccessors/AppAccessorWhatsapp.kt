@@ -25,7 +25,7 @@ open class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoic
     protected val contactRowId = "com.whatsapp:id/contact_row_container"
     protected val attachButtonId = "com.whatsapp:id/input_attach_button"
     protected val contactNameId = "com.whatsapp:id/conversations_row_contact_name"
-    protected val voiceMessageButtonId = "com.whatsapp:id/voice_note_btn; checkable"
+    protected val voiceMessageButtonId = "com.whatsapp:id/voice_note_btn"
 
     // CLASS NAMES
     private val classNameChats = "com.whatsapp.HomeActivity"
