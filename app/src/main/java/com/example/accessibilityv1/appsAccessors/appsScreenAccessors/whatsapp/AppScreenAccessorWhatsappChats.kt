@@ -17,15 +17,15 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
     private var firstChatNode: AccessibilityNodeInfo? = null
 
     init {
-        this.speak("Usa abajo y arriba para navegar por los chats")
+        this.speak("Lista de chats")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
 //        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType) {
 //            this.traverseNodes(event.source)
 //        }
+//        this.speakOnFocus(event)
         this.speakChatName(event)
-        this.speakOnFocus(event)
         this.openChat(event)
     }
 //

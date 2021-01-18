@@ -13,20 +13,6 @@ open class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoic
     override val packageName: String get() = "com.whatsapp"
     override var appScreenAccessor: AppScreenAccessor = AppScreenAccessorWhatsappChats(textToVoice)
 
-    // VIEW IDS
-    protected val chatMessagesListId = "android:id/list"
-    protected val messageDateId = "com.whatsapp:id/date"
-    protected val newChatButtonId = "com.whatsapp:id/fab"
-    protected val chatTextInputId = "com.whatsapp:id/entry"
-    protected val chatMessageTextId = "com.whatsapp:id/message_text"
-    protected val tabsId = "com.whatsapp:id/home_tab_layout"
-    protected val cameraButtonId = "com.whatsapp:id/camera_btn"
-    protected val emojiButtonId = "com.whatsapp:id/emoji_picker_btn"
-    protected val contactRowId = "com.whatsapp:id/contact_row_container"
-    protected val attachButtonId = "com.whatsapp:id/input_attach_button"
-    protected val contactNameId = "com.whatsapp:id/conversations_row_contact_name"
-    protected val voiceMessageButtonId = "com.whatsapp:id/voice_note_btn"
-
     // CLASS NAMES
     private val classNameChats = "com.whatsapp.HomeActivity"
     private val classNameConversation = "com.whatsapp.Conversation"
