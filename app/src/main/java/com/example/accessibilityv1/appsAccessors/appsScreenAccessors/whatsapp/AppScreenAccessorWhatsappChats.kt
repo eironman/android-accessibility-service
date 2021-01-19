@@ -1,6 +1,5 @@
 package com.example.accessibilityv1.appsAccessors.appsScreenAccessors.whatsapp
 
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice
@@ -9,56 +8,38 @@ import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.AppScreenAc
 class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccessor(textToVoice) {
     private var chatName = ""
     private var openingChat = false
-    private var focusIsOnChatsTab = false
-    private val contactViewIdResName = "com.whatsapp:id/contact_name"
+    private var focusChatPointer = -1
+    private var chatsNodes: MutableList<AccessibilityNodeInfo> = mutableListOf()
     private val contactContainerViewIdResName = "com.whatsapp:id/contact_row_container"
-
-    private var chatsTabNode: AccessibilityNodeInfo? = null
-    private var firstChatNode: AccessibilityNodeInfo? = null
 
     init {
         this.speak("Lista de chats")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-//        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType) {
-//            this.traverseNodes(event.source)
-//        }
-//        this.speakOnFocus(event)
+        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType) {
+            this.collectChatsNodes(event.source)
+            this.chatsNodes.reverse()
+        }
         this.speakChatName(event)
-        this.openChat(event)
     }
-//
-//    private fun traverseNodes(node: AccessibilityNodeInfo) {
-//        for (i in node.childCount downTo 1) {
-//            val child: AccessibilityNodeInfo = node.getChild(i - 1)
-//            Log.i("CHILD", child.toString())
-//            Log.i("CHILD", "-----------------")
-//            if (this.isChatsTab(child)) {
-//                node.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
-//                this.focusIsOnChatsTab = true
-//                this.chatsTabNode = node
-//            } else if (this.isChat(child)) {
-//                this.firstChatNode = child
-//            } else {
-//                traverseNodes(child)
-//            }
-//        }
-//    }
-//
-//    private fun isChatsTab(node: AccessibilityNodeInfo): Boolean {
-//        return node.text != null && node.text.toString() == "CHATS"
-//    }
-//
-//    private fun isChat(node: AccessibilityNodeInfo): Boolean {
-//        return node.viewIdResourceName != null &&
-//                node.className.toString() == this.classNameRelativeLayout &&
-//                node.viewIdResourceName == this.contactContainerViewIdResName
-//    }
+
+    private fun collectChatsNodes(node: AccessibilityNodeInfo) {
+        if (node.viewIdResourceName != null &&
+            node.className.toString() == this.classNameRelativeLayout &&
+            node.viewIdResourceName == this.contactContainerViewIdResName)
+        {
+            this.chatsNodes.add(node)
+        }
+        for (i in node.childCount downTo 1) {
+            collectChatsNodes(node.getChild(i - 1))
+        }
+    }
 
     private fun speakChatName(event: AccessibilityEvent) {
         if (AccessibilityEvent.TYPE_VIEW_SELECTED == event.eventType &&
-            event.contentDescription != null) {
+            event.contentDescription != null)
+        {
             val className = event.className.toString()
             val contentDescription = event.contentDescription.toString()
             if (className == this.classNameImageView) {
@@ -71,39 +52,65 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
         }
     }
 
-    private fun openChat(event: AccessibilityEvent) {
-        if (AccessibilityEvent.TYPE_VIEW_CLICKED == event.eventType &&
-            event.className.toString() == this.classNameRelativeLayout &&
-            event.source != null &&
-            !this.openingChat) {
-                event.source.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                this.openingChat = true
+    override fun onButtonAReleased(): Boolean {
+        this.openChat()
+        return this.keyEventStopPropagationResponse
+    }
+
+    private fun openChat() {
+        if (this.focusChatPointer > -1 && !this.openingChat) {
+            this.openingChat = true
+            this.chatsNodes[this.focusChatPointer].performAction(AccessibilityNodeInfo.ACTION_CLICK)
         }
     }
-//
-//    override fun onButtonDownPressed(): Boolean {
-//        if (this.focusIsOnChatsTab) {
-//            return this.keyEventStopPropagationResponse
-//        }
-//        return super.onButtonDownPressed()
-//    }
-//
-//    override fun onButtonDownReleased(): Boolean {
-//        if (this.focusIsOnChatsTab) {
-//            this.focusOnFirstChat()
-//            return this.keyEventStopPropagationResponse
-//        }
-//        return super.onButtonDownReleased()
-//    }
-//
-//    private fun focusOnFirstChat() {
-//        this.focusIsOnChatsTab = false
-//        this.chatsTabNode?.performAction(AccessibilityNodeInfo.ACTION_CLEAR_FOCUS)
-//        this.firstChatNode?.performAction(AccessibilityNodeInfo.ACTION_SELECT)
-//        for (i in this.firstChatNode?.childCount?.downTo(1)!!) {
-//            this.firstChatNode?.getChild(i - 1)?.performAction(AccessibilityNodeInfo.ACTION_SELECT)
-//        }
-//    }
+
+    override fun onButtonUpReleased(): Boolean {
+        this.traverseUpChats()
+        return this.keyEventStopPropagationResponse
+    }
+
+    private fun traverseUpChats() {
+        if (this.focusChatPointer > -1) {
+            this.chatsNodes[this.focusChatPointer]
+                .performAction(AccessibilityNodeInfo.ACTION_CLEAR_SELECTION)
+        }
+        if (this.focusChatPointer > 0) {
+            this.focusChatPointer--
+        }
+        if (this.focusChatPointer > -1) {
+            this.chatsNodes[this.focusChatPointer]
+                .performAction(AccessibilityNodeInfo.ACTION_SELECT)
+        }
+    }
+
+    override fun onButtonDownReleased(): Boolean {
+        this.traverseDownChats()
+        return this.keyEventStopPropagationResponse
+    }
+
+    private fun traverseDownChats() {
+        if (this.focusChatPointer > -1) {
+            this.chatsNodes[this.focusChatPointer]
+                .performAction(AccessibilityNodeInfo.ACTION_CLEAR_SELECTION)
+        }
+        if (this.focusChatPointer < this.chatsNodes.size - 1) {
+            this.focusChatPointer++
+        }
+        this.chatsNodes[this.focusChatPointer]
+            .performAction(AccessibilityNodeInfo.ACTION_SELECT)
+    }
+
+    override fun onButtonAPressed(): Boolean {
+        return this.keyEventStopPropagationResponse
+    }
+
+    override fun onButtonUpPressed(): Boolean {
+        return this.keyEventStopPropagationResponse
+    }
+
+    override fun onButtonDownPressed(): Boolean {
+        return this.keyEventStopPropagationResponse
+    }
 
     override fun onButtonRightPressed(): Boolean {
         return this.keyEventStopPropagationResponse

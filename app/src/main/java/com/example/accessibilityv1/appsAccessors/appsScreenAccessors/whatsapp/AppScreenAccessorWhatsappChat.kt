@@ -22,7 +22,7 @@ class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor
             this.collectConversationNodes(event.source)
         }
         this.readChatMessage(event)
-        this.pauseChatAudioMessage(event)
+        this.stopAutoplayAudioMessage(event)
     }
 
     private fun collectConversationNodes(node: AccessibilityNodeInfo) {
@@ -52,7 +52,7 @@ class AppScreenAccessorWhatsappChat(textToVoice: TextToVoice): AppScreenAccessor
         }
     }
 
-    private fun pauseChatAudioMessage(event: AccessibilityEvent) {
+    private fun stopAutoplayAudioMessage(event: AccessibilityEvent) {
         if (AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED == event.eventType) {
             val node: AccessibilityNodeInfo = event.source
             if (this.selectedPlayAudioNode != null &&

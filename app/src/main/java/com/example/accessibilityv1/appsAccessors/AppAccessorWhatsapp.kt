@@ -1,8 +1,6 @@
 package com.example.accessibilityv1.appsAccessors
 
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice
 import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.AppScreenAccessor
 import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.whatsapp.AppScreenAccessorWhatsappChat
@@ -13,7 +11,6 @@ open class AppAccessorWhatsapp(textToVoice: TextToVoice): AppAccessor(textToVoic
     override val packageName: String get() = "com.whatsapp"
     override var appScreenAccessor: AppScreenAccessor = AppScreenAccessorWhatsappChats(textToVoice)
 
-    // CLASS NAMES
     private val classNameChats = "com.whatsapp.HomeActivity"
     private val classNameConversation = "com.whatsapp.Conversation"
 
