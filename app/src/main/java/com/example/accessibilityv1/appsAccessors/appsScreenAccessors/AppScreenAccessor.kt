@@ -15,6 +15,7 @@ abstract class AppScreenAccessor constructor(var textToVoice: TextToVoice) {
     protected val classNameTextView = "android.widget.TextView"
     protected val classNameViewGroup = "android.view.ViewGroup"
     protected val classNameImageView = "android.widget.ImageView"
+    protected val classNameFrameLayout = "android.widget.FrameLayout"
     protected val classNameImageButton = "android.widget.ImageButton"
     protected val classNameRelativeLayout = "android.widget.RelativeLayout"
 

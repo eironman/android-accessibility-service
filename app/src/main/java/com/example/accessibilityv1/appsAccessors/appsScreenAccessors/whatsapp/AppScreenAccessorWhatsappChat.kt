@@ -1,9 +1,6 @@
 package com.example.accessibilityv1.appsAccessors.appsScreenAccessors.whatsapp
 
 import android.accessibilityservice.GestureDescription
-import android.graphics.Path
-import android.graphics.Rect
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice

@@ -1,8 +1,6 @@
 package com.example.accessibilityv1.appsAccessors.appsScreenAccessors.whatsapp
 
 import android.accessibilityservice.GestureDescription
-import android.graphics.Path
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice
@@ -36,7 +34,6 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
         {
             this.chatsNodes.add(node)
         }
-        Log.i("NODES", node.toString())
         for (i in node.childCount downTo 1) {
             if (node.getChild(i - 1) != null) {
                 collectChatsNodes(node.getChild(i - 1))
@@ -53,7 +50,8 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
             if (className == this.classNameImageView) {
                 this.chatName = contentDescription.toLowerCase(Locale.ROOT)
             }
-            if (className == this.classNameTextView && contentDescription.contains("no leído")) {
+            if (className == this.classNameTextView &&
+                    contentDescription.contains("no leído")) {
                 this.chatName += ", " + event.contentDescription.toString()
             }
             this.speak(this.chatName)
