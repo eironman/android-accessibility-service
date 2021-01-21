@@ -5,16 +5,19 @@ import com.example.accessibilityv1.TextToVoice
 
 class AppAccessorFactory(textToVoice: TextToVoice) {
     private var accessorHome: AppAccessorHome = AppAccessorHome(textToVoice)
-    private var accessorOnce: AppAccessorOnce = AppAccessorOnce(textToVoice)
-    private var accessorSettings: AppAccessorSettings = AppAccessorSettings(textToVoice)
+    private var accessorDefault: AppAccessorDefault = AppAccessorDefault(textToVoice)
     private var accessorWhatsapp: AppAccessorWhatsapp = AppAccessorWhatsapp(textToVoice)
 
     fun getAccessor(event: AccessibilityEvent): AppAccessor {
-        return when (event.packageName?.toString()) {
-            this.accessorOnce.packageName -> this.accessorOnce
-            this.accessorSettings.packageName -> this.accessorSettings
-            this.accessorWhatsapp.packageName -> this.accessorWhatsapp
-            else -> this.accessorHome
+        if (event.packageName != null) {
+            val packageName = event.packageName.toString()
+            return when {
+                packageName == this.accessorWhatsapp.packageName -> this.accessorWhatsapp
+                packageName.contains("launcher") -> this.accessorHome
+                else -> this.accessorDefault
+            }
         }
+
+        return this.accessorDefault
     }
 }

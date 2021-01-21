@@ -1,9 +1,13 @@
 package com.example.accessibilityv1.appsAccessors.appsScreenAccessors.whatsapp
 
+import android.accessibilityservice.GestureDescription
+import android.graphics.Path
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.accessibilityv1.TextToVoice
 import com.example.accessibilityv1.appsAccessors.appsScreenAccessors.AppScreenAccessor
+import java.util.*
 
 class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccessor(textToVoice) {
     private var chatName = ""
@@ -17,7 +21,8 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType) {
+        if (AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED == event.eventType &&
+                event.source != null) {
             this.collectChatsNodes(event.source)
             this.chatsNodes.reverse()
         }
@@ -31,8 +36,11 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
         {
             this.chatsNodes.add(node)
         }
+        Log.i("NODES", node.toString())
         for (i in node.childCount downTo 1) {
-            collectChatsNodes(node.getChild(i - 1))
+            if (node.getChild(i - 1) != null) {
+                collectChatsNodes(node.getChild(i - 1))
+            }
         }
     }
 
@@ -43,7 +51,7 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
             val className = event.className.toString()
             val contentDescription = event.contentDescription.toString()
             if (className == this.classNameImageView) {
-                this.chatName = contentDescription
+                this.chatName = contentDescription.toLowerCase(Locale.ROOT)
             }
             if (className == this.classNameTextView && contentDescription.contains("no leído")) {
                 this.chatName += ", " + event.contentDescription.toString()
@@ -52,7 +60,7 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
         }
     }
 
-    override fun onButtonAReleased(): Boolean {
+    override fun onButtonAReleased(doGesture: (gesture: GestureDescription) -> Unit?): Boolean {
         this.openChat()
         return this.keyEventStopPropagationResponse
     }
@@ -112,19 +120,19 @@ class AppScreenAccessorWhatsappChats(textToVoice: TextToVoice): AppScreenAccesso
         return this.keyEventStopPropagationResponse
     }
 
-    override fun onButtonRightPressed(): Boolean {
-        return this.keyEventStopPropagationResponse
-    }
-
     override fun onButtonLeftPressed(): Boolean {
         return this.keyEventStopPropagationResponse
     }
 
-    override fun onButtonRightReleased(): Boolean {
+    override fun onButtonLeftReleased(): Boolean {
         return this.keyEventStopPropagationResponse
     }
 
-    override fun onButtonLeftReleased(): Boolean {
+    override fun onButtonRightPressed(): Boolean {
+        return this.keyEventStopPropagationResponse
+    }
+
+    override fun onButtonRightReleased(): Boolean {
         return this.keyEventStopPropagationResponse
     }
 }

@@ -1,6 +1,7 @@
 package com.example.accessibilityv1
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.GestureDescription
 import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
@@ -42,12 +43,17 @@ class AccessibilityV1: AccessibilityService() {
     }
 
     override fun onKeyEvent(keyEvent: KeyEvent): Boolean {
-        Log.i("AA", keyEvent.toString())
-        return this.appAccessor.onKeyEvent(keyEvent, ::doGlobalAction)
+        Log.i("KEY EVENT", keyEvent.toString())
+        return this.appAccessor.onKeyEvent(keyEvent, ::doGlobalAction, ::doGesture)
     }
 
     private fun doGlobalAction(action: Int) {
+        Log.i("GLOBAL ACTION", action.toString())
         performGlobalAction(action)
+    }
+
+    private fun doGesture(gesture: GestureDescription) {
+        this.dispatchGesture(gesture, null, null)
     }
 
     override fun onDestroy() {
